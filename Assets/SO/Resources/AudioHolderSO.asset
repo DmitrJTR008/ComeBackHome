@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d7fd1d679f586c4693bd8b9235a34d9, type: 3}
+  m_Name: AudioHolderSO
+  m_EditorClassIdentifier: 
+  EngineThrootleSFX: {fileID: 8300000, guid: 97e818a283fa9624b805f3a823dc2a1e, type: 3}
+  ExploseSFX: {fileID: 8300000, guid: afa0c80b8cfaf044ea8ca55210e390ca, type: 3}
+  WinSFX: {fileID: 8300000, guid: 5ac06b1f247867b46bde3606dd717b0f, type: 3}
