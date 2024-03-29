@@ -24,6 +24,11 @@ public class UICarrerMenu : MonoBehaviour
             }
             else
                 sub.interactable = false;
+
+            if (i == totalLevel - 1)
+            {
+                clone.GetChild(0).GetChild(0).gameObject.SetActive(true);
+            }
         }
         
        ComponentPrefab.gameObject.SetActive(false);

@@ -59,7 +59,6 @@ public class RocketController : MonoBehaviour
         
     }
     
-
     void OnTriggerEnter(Collider other)
     {
         string tag = other.tag;
@@ -77,6 +76,7 @@ public class RocketController : MonoBehaviour
                 case "Finish":
                     canMove = false;
                     _currentState = RocketCurrentState.Win;
+                    
                     break;
                 
             }
@@ -84,6 +84,7 @@ public class RocketController : MonoBehaviour
                 DestroyRocket();
             OnRocketGameComplete?.Invoke(_currentState);
         }
+        
     }
 
     void DestroyRocket()

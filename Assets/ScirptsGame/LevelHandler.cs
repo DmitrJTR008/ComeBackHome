@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using YG;
-
+using UnityEngine.UI;
 public class LevelHandler : MonoBehaviour
 {
+
+    public GameObject LevelSpeedRunPanel;
 
     private Action<IDataSaveable> OnDataLoad;
     private ActorSaveData _actorData;
@@ -50,20 +51,16 @@ public class LevelHandler : MonoBehaviour
 
     private void Start()
     {
-        DissolveGame.StartDissolve(true);   
-        
-        MainActor._rocketAudioComponent.SetVolume(_settingsSave.SoundVolume);
-        /*try
+        if (SpeedRunTimer.Instance.isActivate)
         {
-            RefreshRate mainDisplay = Screen.currentResolution.refreshRateRatio;
-
-            int maxRefreshRate = Mathf.RoundToInt(mainDisplay.numerator);
-            Application.targetFrameRate = maxRefreshRate;
+            LevelSpeedRunPanel.SetActive(true);
+            LevelSpeedRunPanel.transform.GetChild(0).GetComponent<Text>().text = SceneManager.GetActiveScene().buildIndex.ToString();
         }
-        catch
-        {
-            
-        }*/
+        DissolveGame.StartDissolve(true);
+        MainActor._rocketAudioComponent.SetVolume(_settingsSave.SoundVolume);
+
+        
+       
     }
 
     private void OnEnable()
@@ -86,6 +83,7 @@ public class LevelHandler : MonoBehaviour
         
         rocketState = currentState;
         if (finishTimerCoroutine != null) return;
+       
         finishTimerCoroutine = StartCoroutine(TimerEnumerator());
     }
 
@@ -146,34 +144,63 @@ public class LevelHandler : MonoBehaviour
         string result = "УСПЕШНО";
         switch (isWin)
         {
+            
             case true:
                 switch (langIndex)
                 {
                     case 0:
-                        result = $"УСПЕШНО: ";
-                        gameUIView.UpdateRewardText($"НАГРАДА: {RewardForLevel}$");
+                        result = $"УСПЕШНО";
+                        if(!SpeedRunTimer.Instance.isActivate)
+                            gameUIView.UpdateRewardText($"НАГРАДА: {RewardForLevel}$");
                         break;
                     case 1:
-                        result = $"SUCCESS: ";
-                        gameUIView.UpdateRewardText($"REWARD: {RewardForLevel}$");
+                        result = $"SUCCESS";
+                        if(!SpeedRunTimer.Instance.isActivate)
+                            gameUIView.UpdateRewardText($"REWARD: {RewardForLevel}$");
                         break;
                     case 2:
-                        result = $"BAŞARILI: ";
-                        gameUIView.UpdateRewardText($"ÖDÜL {RewardForLevel}$");
+                        result = $"BAŞARILI";
+                        if(!SpeedRunTimer.Instance.isActivate)
+                            gameUIView.UpdateRewardText($"ÖDÜL: {RewardForLevel}$");
                         break;
+                }
+
+                if (SpeedRunTimer.Instance.isActivate && SceneManager.GetActiveScene().buildIndex == 20)
+                {
+                    SpeedRunTimer.Instance.PauseTimer();
+                    float currentTime = SpeedRunTimer.Instance.GetElapsedMinutes();
+                    if (!_actorData.IsWasSpeedRun )
+                    {
+                        _actorData.IsWasSpeedRun = true;
+                        _actorData.SpeedRunTimer = currentTime;
+                        _actorData.IsSpeedRunComplete = true;
+                        SaveDataHandler.SaveGameServer(_actorData);
+                        
+                    }
+                    else if (_actorData.SpeedRunTimer > currentTime)
+                    {
+                        _actorData.IsWasSpeedRun = true;
+                        _actorData.SpeedRunTimer = currentTime;
+                        _actorData.IsSpeedRunComplete = true;
+
+                        SaveDataHandler.SaveGameServer(_actorData);
+
+                    }
+                    SpeedRunTimer.Instance.ResetTimer();
+
                 }
                 break;
             case false:
                 switch (langIndex)
                 {
                     case 0:
-                        result = "ПРОВАЛ: ";
+                        result = "ПРОВАЛ";
                         break;
                     case 1:
-                        result = "FAIL: ";
+                        result = "FAIL";
                         break;
                     case 2:
-                        result = "BAŞARISIZLIK: ";
+                        result = "BAŞARISIZLIK";
                         break;
                 }
                 break;
@@ -201,11 +228,15 @@ public class LevelHandler : MonoBehaviour
         }
         
         SaveData();
+        
         SceneManager.LoadScene(target_scene);
     }
 
     private void SaveData()
     {
+        if (SpeedRunTimer.Instance.isActivate) return;
+        if (SceneManager.GetActiveScene().buildIndex == 20)
+            _actorData.IsCarrerComplete = true;
         _actorData.money += RewardForLevel;
         if (_actorData.CompleteLvl <= SceneManager.GetActiveScene().buildIndex)
         {
@@ -214,10 +245,7 @@ public class LevelHandler : MonoBehaviour
                 _actorData.CompleteLvl = SceneManager.GetActiveScene().buildIndex ;
             }
         }
-        else
-        {
-            Debug.Log("NotSave");
-        }
+       
         SaveDataHandler.SaveGameServer(_actorData);
     }
 

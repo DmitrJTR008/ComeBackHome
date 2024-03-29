@@ -20,6 +20,12 @@ public class GameUIPresenter
 
     public void GoHome()
     {
+        if (SpeedRunTimer.Instance.isActivate)
+        {
+            SpeedRunTimer.Instance.isActivate = false;
+            SpeedRunTimer.Instance.ResetTimer();
+        }
+
         SceneManager.LoadScene(0);
     }
 }

@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using YG;
-
 public class MiniGuider : MonoBehaviour
 {
     public RocketController rocket;
@@ -15,14 +13,8 @@ public class MiniGuider : MonoBehaviour
     private string prefsDesktop = "gidegamedesk";
     private void Awake()
     {
-        if (YandexGame.EnvironmentData.isDesktop)
-        {
-            ChoiseTarget(prefsDesktop, PanelDesktop);
-        }
-        else if (YandexGame.EnvironmentData.isMobile || YandexGame.EnvironmentData.isTablet)
-        {
+       
             ChoiseTarget(prefs,PanelGuide);
-        }
         
     }
 

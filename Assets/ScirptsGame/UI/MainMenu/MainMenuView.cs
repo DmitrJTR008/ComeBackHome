@@ -8,7 +8,6 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using YG;
 
 public class MainMenuView : MonoBehaviour
 {
@@ -18,11 +17,11 @@ public class MainMenuView : MonoBehaviour
     [SerializeField] private UIDissolveHandler DissolveEffect;
     [SerializeField] private GameObject UIMainMenuROOT;
     public MainMenuPresenter _presenter { get; private set; }
-    
-    
-    
+    public AdsInitializer AdsObject;
+
+    int x;
     #region UIHierarchy
-    
+
     [SerializeField] private ActorBillBoardLobby _actorBillBoard;
     public UIShopMenu ShopMenuUI;
     public UIInventoryMenu InventoryMenuUI;
@@ -46,8 +45,6 @@ public class MainMenuView : MonoBehaviour
     public void ResetALl()
     {
         
-        YandexGame.ResetSaveProgress();
-        YandexGame.SaveProgress();
         PlayerPrefs.DeleteAll();
         if(File.Exists(Path.Combine(Application.persistentDataPath,"SettingsGame.json")))
         {
@@ -64,7 +61,7 @@ public class MainMenuView : MonoBehaviour
     
     private void Awake()
     {
-        _presenter = new MainMenuPresenter(this,Qualit);
+        _presenter = new MainMenuPresenter(this,Qualit,AdsObject);
     }
 
     private void OnEnable()
@@ -76,11 +73,13 @@ public class MainMenuView : MonoBehaviour
         
         _presenter._model.OnShopInit += ShopSub;
         
-        UIReward.RewardBtn.onClick.AddListener(()=>_presenter.ShowRewardAdd(0));
-        YandexGame.RewardVideoEvent += _presenter.GetReward;
+        //UIReward.RewardBtn.onClick.AddListener(()=>_presenter.ShowRewardAdd(0));
+        
+        //YandexGame.RewardVideoEvent += _presenter.GetReward;
         
         SubscribeSettings(true);
 
+        AdsObject.rew.OnRewardDone += AddBucks;
 
         SettingMenu.QualitySettingSlider.onValueChanged.AddListener((value) => { _presenter.ChangeQuality((int)value); });
     }
@@ -91,12 +90,13 @@ public class MainMenuView : MonoBehaviour
         DissolveEffect.OnEffectClose -= LoadScene;
         _presenter._model.OnShopInit -= ShopSub;
         ShopSubscribe(false);
-        
-        UIReward.RewardBtn.onClick.RemoveAllListeners();
-        YandexGame.RewardVideoEvent -= _presenter.GetReward;
-        
+
+        // UIReward.RewardBtn.onClick.RemoveAllListeners();
+        // YandexGame.RewardVideoEvent -= _presenter.GetReward;
         SubscribeSettings(false);
         SubscribeUICarrer(false);
+
+        AdsObject.rew.OnRewardDone -= AddBucks;
     }
 
     public void InitCarrerUI(int count)
@@ -113,7 +113,7 @@ public class MainMenuView : MonoBehaviour
     //REMOVE
     public void AddBucks()
     {
-        _presenter.GetReward(0);
+        _presenter.GetReward();
     }
     
     private void SubscribeUICarrer(bool toSub)

@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using YG;
-
 public class GameUIView : MonoBehaviour
 {
     public Transform HandlerMobile;
@@ -17,10 +15,8 @@ public class GameUIView : MonoBehaviour
     {
         HandlerMobile = transform.GetChild(0);
         HandlerMobile.gameObject.SetActive(false);
-        if (YandexGame.EnvironmentData.isMobile || YandexGame.EnvironmentData.isTablet)
-        {
-            HandlerMobile.gameObject.SetActive(true);
-        }
+        
+        HandlerMobile.gameObject.SetActive(true);
         _presenter = new GameUIPresenter(this);
         OnMvpInit?.Invoke();
     }

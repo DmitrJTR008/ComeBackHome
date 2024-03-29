@@ -4,21 +4,20 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
-using YG;
-
 public class MainMenuPresenter
 {
     public MainMenuView _view { get; private set; }
     public MainMenuModel _model { get; private set; }
     private List<UniversalRenderPipelineAsset> Qualities;
-
+    private AdsInitializer AdsObject;
     private int nextScene;
     
-    public MainMenuPresenter(MainMenuView view, List <UniversalRenderPipelineAsset> qualit)
+    public MainMenuPresenter(MainMenuView view, List <UniversalRenderPipelineAsset> qualit, AdsInitializer adsObject)
     {
         _view = view;
         Qualities = qualit;
         _model = new MainMenuModel(this, _view);
+        AdsObject = adsObject;
     }
 
     public void BuyNewMaterial(UIShopComponentData data)
@@ -34,15 +33,15 @@ public class MainMenuPresenter
         _view.UpdateTemplateMaterial(_model.GetTargetMaterial(ID));
     }
 
-    public void ShowRewardAdd(int ID)
+    public void ShowRewardAdd()
     {
-        YandexGame.RewVideoShow(ID);
+        AdsObject.rew.ShowAd();
     }
 
-    public void GetReward(int ID)
+    public void GetReward()
     {
-        
-        _model.SaveMoney(1000);
+        Debug.Log("CALL");
+        _model.SaveMoney(500);
         _view.UpdateActorUI(_model.GetMoney());
     }
 
@@ -71,6 +70,14 @@ public class MainMenuPresenter
 
     public void OpenScene()
     {
+        if(nextScene < 1)
+        {
+            AdsObject.ShowBanner();
+        }
+        else
+        {
+            AdsObject.CloseBanner();
+        }
         SceneManager.LoadScene(nextScene);
     }
 
